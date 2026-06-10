@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xenwinx Digital Business Card</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      /* Fallback background if video doesn't load */
+      background: url('https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/NFC%20Company%20background.png') no-repeat center center fixed;
+      background-size: cover;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+    }
+
+    canvas {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      background: transparent !important;
+      pointer-events: none;
+    }
+
+    #ui-panel {
+      position: fixed;
+      bottom: 30px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .btn {
+      pointer-events: all;
+      display: inline-block;
+      background: #0F7C83;
+      color: #ffffff;
+      padding: 14px 32px;
+      border-radius: 40px;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 16px;
+      margin: 0 10px;
+      transition: all 0.2s;
+      box-shadow: 0 0 20px rgba(15, 124, 131, 0.5);
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn:hover {
+      background: #0A5F64;
+      box-shadow: 0 0 30px rgba(15, 124, 131, 0.8);
+    }
+
+    .contact-details {
+      color: #E0F0F2;
+      margin-top: 18px;
+      font-size: 14px;
+      line-height: 1.7;
+      text-shadow: 0 0 12px rgba(15, 124, 131, 0.6);
+      pointer-events: all;
+    }
+
+    /* Darker teal for email and website links */
+    .contact-details a {
+      color: #0F7C83;
+      text-decoration: none;
+    }
+
+    /* Darker teal for the name & title */
+    .contact-details strong {
+      color: #0F7C83;
+      font-weight: bold;
+    }
+
+    #loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #F3F4F4;
+      font-size: 18px;
+      z-index: 20;
+      background: rgba(10, 15, 26, 0.8);
+      padding: 12px 30px;
+      border-radius: 30px;
+      display: none;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Animated background effects (clouds & petals) */
+    .background-effects {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .cloud {
+      position: absolute;
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.7;
+      filter: blur(6px);
+    }
+
+    .cloud1 {
+      width: 250px;
+      height: 90px;
+      top: 10%;
+      left: -300px;
+      background-image: url('https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Cloud%201.png');
+      animation: cloudMove 45s linear infinite;
+    }
+
+    .cloud2 {
+      width: 350px;
+      height: 120px;
+      top: 45%;
+      left: -400px;
+      opacity: 0.6;
+      background-image: url('https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Cloud%202.png');
+      animation: cloudMove 70s linear infinite;
+    }
+
+    .cloud3 {
+      width: 200px;
+      height: 70px;
+      top: 75%;
+      left: -250px;
+      opacity: 0.5;
+      background-image: url('https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Cloud%203.png');
+      animation: cloudMove 55s linear infinite;
+    }
+
+    @keyframes cloudMove {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(180vw);
+      }
+    }
+
+    .petals span {
+      position: absolute;
+      display: block;
+      width: 22px;
+      height: 22px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.85;
+      border-radius: 60% 40% 60% 40%;
+    }
+
+    .petals span:nth-child(8n+1) {
+      background-image: url('https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Petal%201.png');
+    }
+
+    .petals span:nth-child(8n+2) {
+      background-image: url('https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Petal%202.png');
+    }
+
+    .petals span:nth-child(8n+3) {
+      background-image: url('https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Petal%203.png');
+    }
+
+    .petals span:nth-child(8n+4) {
+      background-image: url('https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Petal%204.png');
+    }
+
+    .petals span:nth-child(8n+5) {
+      background-image: url('https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Petal%201.png');
+    }
+
+    .petals span:nth-child(8n+6) {
+      background-image: url('https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Petal%202.png');
+    }
+
+    .petals span:nth-child(8n+7) {
+      background-image: url('https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Petal%203.png');
+    }
+
+    .petals span:nth-child(8n+0) {
+      background-image: url('https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Petal%204.png');
+    }
+
+    .petals span:nth-child(1) {
+      left: 10%;
+      animation: petalFall 14s linear infinite;
+    }
+
+    .petals span:nth-child(2) {
+      left: 20%;
+      animation: petalFall 18s linear infinite;
+    }
+
+    .petals span:nth-child(3) {
+      left: 35%;
+      animation: petalFall 12s linear infinite;
+    }
+
+    .petals span:nth-child(4) {
+      left: 50%;
+      animation: petalFall 20s linear infinite;
+    }
+
+    .petals span:nth-child(5) {
+      left: 65%;
+      animation: petalFall 16s linear infinite;
+    }
+
+    .petals span:nth-child(6) {
+      left: 75%;
+      animation: petalFall 22s linear infinite;
+    }
+
+    .petals span:nth-child(7) {
+      left: 85%;
+      animation: petalFall 15s linear infinite;
+    }
+
+    .petals span:nth-child(8) {
+      left: 95%;
+      animation: petalFall 19s linear infinite;
+    }
+
+    @keyframes petalFall {
+      0% {
+        transform: translateY(-10vh) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      50% {
+        transform: translateY(50vh) translateX(40px) rotate(180deg);
+      }
+
+      100% {
+        transform: translateY(110vh) translateX(-40px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ========== BACKGROUND VIDEO (no stretching) ========== -->
+  <video id="bg-video" autoplay muted loop playsinline style="position: fixed;
+                top: 50%;
+                left: 50%;
+                min-width: 100%;
+                min-height: 100%;
+                width: auto;
+                height: auto;
+                transform: translate(-50%, -50%);
+                object-fit: cover;
+                z-index: -1;
+                background: #0a0f1a;">
+    <source src="https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Digital%20nfc%20video.mp4"
+      type="video/mp4">
+  </video>
+
+  <!-- Loading text -->
+  <div id="loading">Loading Xenwinx Card...</div>
+
+  <!-- Animated background elements (clouds & petals) -->
+  <div class="background-effects">
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    <div class="cloud cloud3"></div>
+    <div class="petals">
+      <span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <!-- UI overlay (buttons & contact info) -->
+  <div id="ui-panel">
+    <button id="save-contact" class="btn">💾 Save to Contacts</button>
+    <div class="contact-details">
+      <strong>Zernobie Winkworth</strong> – Founder, Xenwinx Studio<br>
+      <a href="mailto:hub@xenwinx.com">hub@xenwinx.com</a> |
+      <a href="https://www.xenwinx.com" target="_blank">xenwinx.com</a><br>
+      <span style="color:#0F7C83; font-weight:bold;">Imagine · Design · Inspiring Minds</span>
+    </div>
+  </div>
+
+  <!-- Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.126.0/build/three.min.js"></script>
+  <script>
+    // ---------- SCENE SETUP ----------
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 3.2);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0);
+    document.body.appendChild(renderer.domElement);
+
+    // ---------- LIGHTING ----------
+    const ambient = new THREE.AmbientLight(0xCCDDEE, 0.6);
+    scene.add(ambient);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight1.position.set(1, 1, 2);
+    scene.add(dirLight1);
+    const dirLight2 = new THREE.DirectionalLight(0xCFE7EA, 0.5);
+    dirLight2.position.set(-1, 0.5, -1);
+    scene.add(dirLight2);
+
+    // ---------- ROTATING BUSINESS CARD ----------
+    const cardGroup = new THREE.Group();
+    scene.add(cardGroup);
+    const cardWidth = 0.75;
+    const cardHeight = cardWidth / (711 / 1122);
+    const cardGeometry = new THREE.PlaneGeometry(cardWidth, cardHeight);
+    const emissive = new THREE.Color(0x111111);
+
+    const frontTexture = new THREE.TextureLoader().load(
+      'https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Digital%20Card%20Front.png'
+    );
+    const frontMaterial = new THREE.MeshStandardMaterial({ map: frontTexture, side: THREE.FrontSide, emissive });
+    const frontPlane = new THREE.Mesh(cardGeometry, frontMaterial);
+    frontPlane.position.z = 0.002;
+    cardGroup.add(frontPlane);
+
+    const backTexture = new THREE.TextureLoader().load(
+      'https://cxvvicjtyhkynedezmag.supabase.co/storage/v1/object/public/logo/Digital%20Card%20Back.png'
+    );
+    const backMaterial = new THREE.MeshStandardMaterial({ map: backTexture, side: THREE.FrontSide, emissive });
+    const backPlane = new THREE.Mesh(cardGeometry, backMaterial);
+    backPlane.position.z = -0.002;
+    backPlane.rotation.y = Math.PI;
+    cardGroup.add(backPlane);
+
+    cardGroup.position.set(0, 0, 0);
+
+    // ---------- ANIMATION LOOP ----------
+    function animate() {
+      requestAnimationFrame(animate);
+      cardGroup.rotation.y += 0.0015;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // ---------- RESIZE HANDLER ----------
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // ---------- SAVE TO CONTACTS ----------
+    document.getElementById('save-contact').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:Zernobie Winkworth
+ORG:Xenwinx Studio
+TITLE:Founder
+TEL;TYPE=WORK,VOICE:+27788223622
+EMAIL:hub@xenwinx.com
+URL:https://www.xenwinx.com
+IMPP;X-SERVICE-TYPE=Discord:https://discord.gg/WTvSSWPDzX
+X-SOCIALPROFILE;TYPE=instagram:https://instagram.com/xenwinx_studio
+X-SOCIALPROFILE;TYPE=linkedin:https://linkedin.com/company/xenwinxstudio
+NOTE:Imagine · Design · Inspiring Minds
+END:VCARD`;
+      const blob = new Blob([vcard], { type: 'text/vcard' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'zernobie_winkworth.vcf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    window.addEventListener('load', () => {
+      document.getElementById('loading').style.display = 'none';
+    });
+    setTimeout(() => {
+      document.getElementById('loading').style.display = 'none';
+    }, 5000);
+  </script>
+</body>
+
+</html>
